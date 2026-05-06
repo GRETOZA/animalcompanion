@@ -1,76 +1,133 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Companions Hunter</title>
-    <!-- โหลด Tailwind CSS จาก CDN -->
+    <title>Animal Companion Tracker</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hide scrollbar for cleaner look in modal */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-slate-900 text-slate-200 font-sans p-4 sm:p-8">
     <div class="max-w-7xl mx-auto">
         
-        <!-- ส่วนหัว (Header) -->
-        <header class="mb-8 text-center">
+        <!-- Header -->
+        <header class="mb-6 text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 mb-4 drop-shadow-lg">
-                Animal Companion Hunter
+                Animal Companion Tracker
             </h1>
             <p class="text-slate-400 text-lg">
-                Collection of Beast minions from Mana Cost 4 to 11
+                Track your active companion pool or browse the Beast collection
             </p>
         </header>
 
-        <!-- ช่องค้นหา (Search Bar) -->
-        <div class="mb-6 flex justify-center">
-            <input 
-                type="text" 
-                id="searchInput"
-                placeholder="Search card by name..." 
-                class="w-full max-w-md px-5 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
-            />
-        </div>
+        <!-- Navigation -->
+        <nav class="flex justify-center gap-4 mb-10 border-b border-slate-700 pb-4">
+            <button onclick="switchView('home')" id="navHome" class="px-6 py-2 rounded-full font-bold transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-900/50 scale-105">
+                Summon Tracker
+            </button>
+            <button onclick="switchView('collection')" id="navCollection" class="px-6 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200">
+                Card Database
+            </button>
+        </nav>
 
-        <!-- ส่วนตัวกรอง (Filters Section) -->
-        <div class="flex flex-col gap-4 mb-10 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-            <!-- ตัวกรอง Cost -->
-            <div class="flex flex-wrap items-center gap-2" id="costFilters">
-                <span class="text-slate-300 font-medium w-24">Mana Cost:</span>
-                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
+        <!-- ================= VIEW: HOME (TRACKER) ================= -->
+        <div id="homeView" class="block transition-opacity duration-300">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-white mb-2">Companion Pool Tracker</h2>
+                <p class="text-slate-400">Track the 3 unique companions currently available in your pool. Upgrade the cost as your game progresses.</p>
             </div>
             
-            <!-- ตัวกรอง Keyword -->
-            <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="keywordFilters">
-                <span class="text-slate-300 font-medium w-24">Keyword:</span>
-                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
+            <!-- Tracker Controls Area -->
+            <div id="trackerControlsContainer" class="mb-8 max-w-3xl mx-auto bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+                <!-- Content will be rendered by JS -->
             </div>
 
-            <!-- ตัวกรอง ดาว (Rating) -->
-            <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="ratingFilters">
-                <span class="text-slate-300 font-medium w-24">Rating:</span>
-                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
-                <span class="text-sm text-slate-400 ml-2 italic border-l border-slate-600 pl-3 hidden sm:inline">
+            <!-- Slots Area -->
+            <div id="slotsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Slots will be rendered by JS -->
+            </div>
+        </div>
+
+        <!-- ================= VIEW: COLLECTION ================= -->
+        <div id="collectionView" class="hidden transition-opacity duration-300">
+            <!-- Search Bar -->
+            <div class="mb-6 flex justify-center">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search card by name..." 
+                    class="w-full max-w-md px-5 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
+                />
+            </div>
+
+            <!-- Filters Section -->
+            <div class="flex flex-col gap-4 mb-10 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+                <!-- Cost Filter -->
+                <div class="flex flex-wrap items-center gap-2" id="costFilters">
+                    <!-- Buttons will be rendered by JS -->
+                </div>
+                
+                <!-- Keyword Filter -->
+                <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="keywordFilters">
+                    <!-- Buttons will be rendered by JS -->
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="ratingFilters">
+                    <!-- Buttons will be rendered by JS -->
+                </div>
+                <span class="text-sm text-slate-400 italic text-center mt-2">
                     * Users must give a star rating for the search and sorting system to work.
                 </span>
             </div>
-            <span class="text-sm text-slate-400 italic sm:hidden text-center mt-2">
-                * Users must give a star rating for the search and sorting system to work.
-            </span>
+
+            <!-- Results Counter -->
+            <div class="mb-6 text-slate-400 font-medium">
+                Showing <span id="resultsCount" class="text-white font-bold">0</span> cards
+            </div>
+
+            <!-- Card Grid -->
+            <div id="cardsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+                <!-- Cards will be rendered by JS -->
+            </div>
         </div>
 
-        <!-- ตัวนับจำนวนผลลัพธ์ (Results Counter) -->
-        <div class="mb-6 text-slate-400 font-medium">
-            Showing <span id="resultsCount" class="text-white font-bold">0</span> cards
-        </div>
+        <!-- ================= MODAL FOR SELECTING CARD ================= -->
+        <div id="selectionModal" class="fixed inset-0 bg-black/80 z-50 hidden flex-col items-center justify-center p-4 sm:p-8 backdrop-blur-sm">
+            <div class="bg-slate-800 w-full max-w-4xl max-h-full rounded-2xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden relative">
+                
+                <!-- Close Modal Button -->
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors p-2 bg-slate-900/50 rounded-full z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
 
-        <!-- พื้นที่แสดงการ์ด (Card Grid) -->
-        <div id="cardsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
-            <!-- การ์ดจะถูกสร้างด้วย JavaScript -->
+                <!-- Modal Header -->
+                <div id="modalHeader" class="p-6 border-b border-slate-700 text-center relative shrink-0">
+                    <!-- Content will be managed by JS -->
+                </div>
+
+                <!-- Modal Content Area (Scrollable) -->
+                <div id="modalContent" class="p-6 overflow-y-auto no-scrollbar grow">
+                    <!-- Card list will appear here -->
+                </div>
+
+            </div>
         </div>
 
     </div>
 
     <script>
-        // ข้อมูลการ์ด
+        // Card Data
         const cardsData = [
             // Cost 4
             { name: "Dread Raptor", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_432.png/300px-TLC_432.png?5b6914", keywords: [] },
@@ -79,7 +136,7 @@
             { name: "Mythical Runebear", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/EDR_481.png/300px-EDR_481.png?faa21c", keywords: ['Taunt'] },
             { name: "Ravasaur Matriarch", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_825.png/300px-TLC_825.png?e2d868", keywords: [] },
             { name: "Umbraclaw", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/EDR_227.png/300px-EDR_227.png?ee8efc", keywords: ['Rush', 'Deathrattle'] },
-            { name: "Creature of the Sacred Cave", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_430.png/300px-TLC_430.png?e807d9", keywords: ['End of turn'] },
+            { name: "Creature of the Sacred Cave", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_430.png/300px-TLC_430.png?e807d9", keywords: [] },
             { name: "Everburning Phoenix", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/FIR_919.png/300px-FIR_919.png?dce8bd", keywords: ['Deathrattle'] },
             { name: "Chillspine Stegodon", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/DINO_413.png/300px-DINO_413.png?97387b", keywords: [] },
             { name: "Destructive Phoenix", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/CATA_EVENT_001.png/300px-CATA_EVENT_001.png?cee7ba", keywords: [] },
@@ -155,30 +212,217 @@
             // Cost 10
             { name: "Omen", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_421.png/300px-EDR_421.png?d177f2", keywords: ['Rush', 'Deathrattle', 'Windfury'] },
             { name: "Agamaggan", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_489.png/300px-EDR_489.png?723121", keywords: [] },
-            { name: "Tortolla", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_471.png/300px-EDR_471.png?c65466", keywords: ['Taunt', 'Elusive'] },
-
-            // Cost 11
-            { name: "Ultragigasaur", cost: 11, image: "https://hearthstone.wiki.gg/images/thumb/TLC_248.png/300px-TLC_248.png?c56d4c", keywords: [] }
+            { name: "Tortolla", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_471.png/300px-EDR_471.png?c65466", keywords: ['Taunt', 'Elusive'] }
         ];
 
-        // ตัวเลือกสำหรับฟิลเตอร์
-        const costsList = ['All', 4, 5, 6, 7, 8, 9, 10, 11];
-        const keywordsList = ['All', 'Rush', 'Taunt', 'End of turn', 'Deathrattle', 'Stealth', 'Lifesteal', 'Elusive', 'Windfury'];
+        // Filter Options
+        const costsList = ['All', 4, 5, 6, 7, 8, 9, 10];
+        const keywordsList = ['All', 'Rush', 'Taunt', 'Deathrattle', 'Stealth', 'Lifesteal', 'Elusive', 'Windfury'];
         const ratingsList = ['All', 5, 4, 3, 2, 1];
 
-        // สถานะของแอพ (State)
+        // Global State
         let state = {
+            view: 'home', // 'home' or 'collection'
             selectedCost: 'All',
             selectedKeyword: 'All',
             selectedRating: 'All',
             searchQuery: '',
-            // โหลดข้อมูลดาวจาก localStorage
-            ratings: JSON.parse(localStorage.getItem('hs_beast_ratings') || '{}')
+            ratings: JSON.parse(localStorage.getItem('hs_beast_ratings') || '{}'),
+            
+            // Tracker State
+            currentCost: 4, // Default starting cost
+            slots: [null, null, null], 
+            
+            // Modal State
+            modal: {
+                isOpen: false,
+                slotIndex: 0
+            }
         };
 
-        // ฟังก์ชันอัปเดตและเรนเดอร์ UI ใหม่
-        function render() {
-            // 1. กรองข้อมูล
+        // ================= NAVIGATION =================
+        function switchView(view) {
+            state.view = view;
+            
+            const btnHome = document.getElementById('navHome');
+            const btnColl = document.getElementById('navCollection');
+            
+            if (view === 'home') {
+                btnHome.className = "px-6 py-2 rounded-full font-bold transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-900/50 scale-105";
+                btnColl.className = "px-6 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200";
+                document.getElementById('homeView').classList.remove('hidden');
+                document.getElementById('collectionView').classList.add('hidden');
+                renderHome();
+            } else {
+                btnColl.className = "px-6 py-2 rounded-full font-bold transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-900/50 scale-105";
+                btnHome.className = "px-6 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200";
+                document.getElementById('collectionView').classList.remove('hidden');
+                document.getElementById('homeView').classList.add('hidden');
+                renderCollection();
+            }
+        }
+
+        // ================= RENDER HOME (TRACKER) =================
+        function renderHome() {
+            const controlsContainer = document.getElementById('trackerControlsContainer');
+            const slotsContainer = document.getElementById('slotsContainer');
+
+            // 1. Render Controls
+            const isMaxCost = state.currentCost >= 10;
+            controlsContainer.innerHTML = `
+                <button onclick="resetTracker()" class="w-full sm:w-auto px-6 py-3 bg-red-500/20 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-colors shadow-md">
+                    Reset (Cost 4)
+                </button>
+                
+                <div class="flex flex-col items-center min-w-[150px]">
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Pool Cost</span>
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-4xl font-extrabold text-white shadow-inner border-4 border-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+                        ${state.currentCost}
+                    </div>
+                </div>
+
+                <button onclick="upgradeCost()" ${isMaxCost ? 'disabled' : ''} class="w-full sm:w-auto px-6 py-3 ${isMaxCost ? 'bg-slate-700 text-slate-500 cursor-not-allowed border-slate-600' : 'bg-green-500/20 text-green-400 border border-green-500/50 hover:bg-green-500 hover:text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] hover:shadow-[0_0_15px_rgba(34,197,94,0.6)]'} rounded-xl text-sm font-bold transition-all">
+                    Upgrade Cost
+                </button>
+            `;
+
+            // 2. Render Slots
+            slotsContainer.innerHTML = state.slots.map((card, index) => {
+                if (card === null) {
+                    return `
+                        <div onclick="openModal(${index})" class="cursor-pointer group flex flex-col items-center justify-center bg-slate-800/30 rounded-2xl p-6 border-2 border-dashed border-slate-600 hover:border-blue-500 hover:bg-slate-800/50 transition-all duration-300 aspect-[2/3] shadow-inner">
+                            <div class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-blue-600 transition-all shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-400 group-hover:text-blue-300">Select Companion</h3>
+                            <p class="text-slate-500 text-sm mt-2">Slot ${index + 1}</p>
+                        </div>
+                    `;
+                } else {
+                    const safeCardName = card.name.replace(/'/g, "\\'");
+                    return `
+                        <div class="relative group flex flex-col items-center bg-slate-800 rounded-2xl p-4 border border-slate-600 shadow-xl aspect-[2/3] justify-center">
+                            <!-- Remove Button -->
+                            <button onclick="clearSlot(${index})" class="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            
+                            <!-- Change Button -->
+                            <button onclick="openModal(${index})" class="absolute top-2 left-2 p-2 bg-blue-500/80 hover:bg-blue-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                </svg>
+                            </button>
+
+                            <img src="${card.image}" alt="${card.name}" class="w-[110%] max-w-none h-auto object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400/1e293b/64748b?text=Image+Not+Found';" />
+                            <h3 class="text-lg font-bold text-amber-100 mt-2 text-center leading-tight">${card.name}</h3>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function upgradeCost() {
+            if (state.currentCost < 10) {
+                state.currentCost++;
+                // Clear slots because the pool cost has changed
+                state.slots = [null, null, null];
+                renderHome();
+            }
+        }
+
+        function resetTracker() {
+            const hasCards = state.slots.some(slot => slot !== null);
+            if (hasCards || state.currentCost > 4) {
+                if (!confirm("This will reset the pool cost back to 4 and clear your tracked cards. Continue?")) {
+                    return;
+                }
+            }
+            state.currentCost = 4;
+            state.slots = [null, null, null];
+            renderHome();
+        }
+
+        // ================= MODAL LOGIC =================
+        function openModal(slotIndex) {
+            state.modal.isOpen = true;
+            state.modal.slotIndex = slotIndex;
+            document.getElementById('selectionModal').classList.remove('hidden');
+            document.getElementById('selectionModal').classList.add('flex');
+            renderModal();
+        }
+
+        function closeModal() {
+            state.modal.isOpen = false;
+            document.getElementById('selectionModal').classList.add('hidden');
+            document.getElementById('selectionModal').classList.remove('flex');
+        }
+
+        function renderModal() {
+            const header = document.getElementById('modalHeader');
+            const content = document.getElementById('modalContent');
+
+            // Render Header
+            header.innerHTML = `
+                <h2 class="text-2xl font-bold text-white flex justify-center items-center gap-2">
+                    Select Companion for Slot ${state.modal.slotIndex + 1}
+                </h2>
+                <p class="text-slate-400 mt-2">
+                    Showing Cost ${state.currentCost} Pool | Cannot select cards already tracked
+                </p>
+            `;
+
+            // Filter available cards: Must match currentCost and not be in other slots
+            const alreadyPickedNames = state.slots
+                .filter((card, index) => card !== null && index !== state.modal.slotIndex)
+                .map(card => card.name);
+
+            const availableCards = cardsData.filter(c => 
+                c.cost === state.currentCost && 
+                !alreadyPickedNames.includes(c.name)
+            );
+
+            if (availableCards.length === 0) {
+                content.innerHTML = `<div class="text-center py-20 text-slate-500 text-xl">No cards available (all selected)</div>`;
+                return;
+            }
+
+            // Render Cards
+            content.innerHTML = `
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    ${availableCards.map(card => {
+                        const safeCardName = card.name.replace(/'/g, "\\'");
+                        return `
+                            <button onclick="selectModalCard('${safeCardName}')" class="group flex flex-col items-center bg-slate-700/50 hover:bg-slate-700 rounded-xl p-3 border border-slate-600 hover:border-amber-400 transition-all hover:scale-105 shadow-md">
+                                <div class="w-full aspect-[2/3] flex items-center justify-center">
+                                    <img src="${card.image}" alt="${card.name}" class="max-w-[120%] h-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400/1e293b/64748b?text=Image+Not+Found';" />
+                                </div>
+                                <h4 class="mt-2 font-bold text-amber-100 text-sm group-hover:text-amber-400 line-clamp-2 leading-tight">${card.name}</h4>
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function selectModalCard(cardName) {
+            const cardObj = cardsData.find(c => c.name === cardName);
+            state.slots[state.modal.slotIndex] = cardObj;
+            closeModal();
+            renderHome();
+        }
+
+        function clearSlot(slotIndex) {
+            state.slots[slotIndex] = null;
+            renderHome();
+        }
+
+        // ================= RENDER COLLECTION (DATABASE) =================
+        function renderCollection() {
             let filteredCards = cardsData.filter(card => {
                 const matchCost = state.selectedCost === 'All' || card.cost === state.selectedCost;
                 const matchKeyword = state.selectedKeyword === 'All' || (card.keywords && card.keywords.includes(state.selectedKeyword));
@@ -190,7 +434,6 @@
                 return matchCost && matchKeyword && matchSearch && matchRating;
             });
 
-            // 2. จัดเรียงข้อมูล (Cost น้อยไปมาก -> ดาว มากไปน้อย)
             filteredCards.sort((a, b) => {
                 if (a.cost !== b.cost) return a.cost - b.cost;
                 const ratingA = state.ratings[a.name] || 0;
@@ -198,17 +441,11 @@
                 return ratingB - ratingA;
             });
 
-            // 3. วาดปุ่มฟิลเตอร์
             renderFilters();
-
-            // 4. วาดตัวเลขผลลัพธ์
             document.getElementById('resultsCount').innerText = filteredCards.length;
-
-            // 5. วาดการ์ดทั้งหมด
-            renderCards(filteredCards);
+            renderCollectionCards(filteredCards);
         }
 
-        // ฟังก์ชันวาดปุ่มฟิลเตอร์
         function renderFilters() {
             // Cost Filters
             document.getElementById('costFilters').innerHTML = '<span class="text-slate-300 font-medium w-24">Mana Cost:</span>' + 
@@ -249,8 +486,7 @@
                 }).join('') + ratingNote;
         }
 
-        // ฟังก์ชันวาดรูปการ์ด
-        function renderCards(filteredCards) {
+        function renderCollectionCards(filteredCards) {
             const container = document.getElementById('cardsContainer');
             
             if (filteredCards.length === 0) {
@@ -263,11 +499,9 @@
 
             container.innerHTML = filteredCards.map((card) => {
                 const currentRating = state.ratings[card.name] || 0;
-                
-                // แปลงคำที่มี Single quote ให้ไม่พังเมื่อใส่ใน onclick
                 const safeCardName = card.name.replace(/'/g, "\\'");
                 
-                // สร้างดาว
+                // Render Stars
                 const starsHtml = [1, 2, 3, 4, 5].map(star => {
                     const isActive = currentRating >= star;
                     const colorClass = isActive ? 'text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.6)]' : 'text-slate-600 hover:text-yellow-200';
@@ -280,7 +514,7 @@
                     `;
                 }).join('');
 
-                // สร้าง Keywords tags
+                // Render Keywords
                 const keywordsHtml = card.keywords && card.keywords.length > 0 
                     ? `<div class="flex flex-wrap justify-center gap-1 mt-2">
                         ${card.keywords.map(kw => `<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-slate-700/80 text-amber-200 rounded-full border border-amber-900/50">${kw}</span>`).join('')}
@@ -314,35 +548,30 @@
 
         // --- Event Handlers & Actions ---
 
-        // จัดการเมื่อเปลี่ยนตัวกรอง (Cost, Keyword, Rating)
         function setFilter(type, value) {
             if (type === 'cost') state.selectedCost = value;
             if (type === 'keyword') state.selectedKeyword = value;
             if (type === 'rating') state.selectedRating = value;
-            render();
+            renderCollection();
         }
 
-        // จัดการช่องค้นหา
         document.getElementById('searchInput').addEventListener('input', (e) => {
             state.searchQuery = e.target.value;
-            render();
+            renderCollection();
         });
 
-        // จัดการเวลากดให้ดาว
         function handleRate(cardName, star) {
             if (state.ratings[cardName] === star) {
-                // ถ้ากดดาวดวงเดิมให้รีเซ็ต
                 state.ratings[cardName] = 0;
             } else {
                 state.ratings[cardName] = star;
             }
-            // เซฟลง localStorage ทันที
             localStorage.setItem('hs_beast_ratings', JSON.stringify(state.ratings));
-            render();
+            renderCollection();
         }
 
-        // สั่งทำงานครั้งแรกเมื่อเปิดหน้าเว็บ
-        render();
+        // Initialize (Start at Tracker View)
+        switchView('home');
 
     </script>
 </body>
