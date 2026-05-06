@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Companions Hunter</title>
+    <!-- โหลด Tailwind CSS จาก CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-200 font-sans p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- ส่วนหัว (Header) -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 mb-4 drop-shadow-lg">
+                Animal Companion Hunter
+            </h1>
+            <p class="text-slate-400 text-lg">
+                Collection of Beast minions from Mana Cost 4 to 11
+            </p>
+        </header>
+
+        <!-- ช่องค้นหา (Search Bar) -->
+        <div class="mb-6 flex justify-center">
+            <input 
+                type="text" 
+                id="searchInput"
+                placeholder="Search card by name..." 
+                class="w-full max-w-md px-5 py-3 rounded-xl bg-slate-800 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
+            />
+        </div>
+
+        <!-- ส่วนตัวกรอง (Filters Section) -->
+        <div class="flex flex-col gap-4 mb-10 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+            <!-- ตัวกรอง Cost -->
+            <div class="flex flex-wrap items-center gap-2" id="costFilters">
+                <span class="text-slate-300 font-medium w-24">Mana Cost:</span>
+                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
+            </div>
+            
+            <!-- ตัวกรอง Keyword -->
+            <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="keywordFilters">
+                <span class="text-slate-300 font-medium w-24">Keyword:</span>
+                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
+            </div>
+
+            <!-- ตัวกรอง ดาว (Rating) -->
+            <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-700" id="ratingFilters">
+                <span class="text-slate-300 font-medium w-24">Rating:</span>
+                <!-- ปุ่มจะถูกสร้างด้วย JavaScript -->
+                <span class="text-sm text-slate-400 ml-2 italic border-l border-slate-600 pl-3 hidden sm:inline">
+                    * Users must give a star rating for the search and sorting system to work.
+                </span>
+            </div>
+            <span class="text-sm text-slate-400 italic sm:hidden text-center mt-2">
+                * Users must give a star rating for the search and sorting system to work.
+            </span>
+        </div>
+
+        <!-- ตัวนับจำนวนผลลัพธ์ (Results Counter) -->
+        <div class="mb-6 text-slate-400 font-medium">
+            Showing <span id="resultsCount" class="text-white font-bold">0</span> cards
+        </div>
+
+        <!-- พื้นที่แสดงการ์ด (Card Grid) -->
+        <div id="cardsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+            <!-- การ์ดจะถูกสร้างด้วย JavaScript -->
+        </div>
+
+    </div>
+
+    <script>
+        // ข้อมูลการ์ด
+        const cardsData = [
+            // Cost 4
+            { name: "Dread Raptor", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_432.png/300px-TLC_432.png?5b6914", keywords: [] },
+            { name: "Halazzi, the Lynx", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TRL_900.png/300px-TRL_900.png?d373e8", keywords: ['Rush'] },
+            { name: "King Maluk", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TIME_042.png/300px-TIME_042.png?b15eac", keywords: [] },
+            { name: "Mythical Runebear", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/EDR_481.png/300px-EDR_481.png?faa21c", keywords: ['Taunt'] },
+            { name: "Ravasaur Matriarch", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_825.png/300px-TLC_825.png?e2d868", keywords: [] },
+            { name: "Umbraclaw", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/EDR_227.png/300px-EDR_227.png?ee8efc", keywords: ['Rush', 'Deathrattle'] },
+            { name: "Creature of the Sacred Cave", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_430.png/300px-TLC_430.png?e807d9", keywords: ['End of turn'] },
+            { name: "Everburning Phoenix", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/FIR_919.png/300px-FIR_919.png?dce8bd", keywords: ['Deathrattle'] },
+            { name: "Chillspine Stegodon", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/DINO_413.png/300px-DINO_413.png?97387b", keywords: [] },
+            { name: "Destructive Phoenix", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/CATA_EVENT_001.png/300px-CATA_EVENT_001.png?cee7ba", keywords: [] },
+            { name: "Razidir", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_463.png/300px-TLC_463.png?8fbc4b", keywords: [] },
+            { name: "Shadowflame Stalker", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/FIR_924.png/300px-FIR_924.png?bcd510", keywords: [] },
+            { name: "Dragon Turtle", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/FIR_956.png/300px-FIR_956.png?f1b812", keywords: [] },
+            { name: "Ancient Pterrordax", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_246.png/300px-TLC_246.png?f97f58", keywords: [] },
+            { name: "Crater Gator", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_250.png/300px-TLC_250.png?76196e", keywords: [] },
+            { name: "Fire Plume Phoenix", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/UNG_084.png/300px-UNG_084.png?b93520", keywords: [] },
+            { name: "Lifedrinker", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/GIL_622.png/300px-GIL_622.png?596b5c", keywords: [] },
+            { name: "Mother Duck", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/EDR_492.png/300px-EDR_492.png?97c58a", keywords: [] },
+            { name: "Primal Sabretooth", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_247.png/300px-TLC_247.png?6a1e6a", keywords: ['Stealth'] },
+            { name: "Torga", cost: 4, image: "https://hearthstone.wiki.gg/images/thumb/TLC_102.png/300px-TLC_102.png?31dde9", keywords: [] },
+            
+            // Cost 5
+            { name: "Hollow Direhorn", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/DINO_416.png/300px-DINO_416.png?4f4b48", keywords: ['Rush'] },
+            { name: "Reanimated Pterrordax", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TLC_436.png/300px-TLC_436.png?8c4129", keywords: ['Rush', 'Lifesteal'] },
+            { name: "Alara'shi", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/EDR_493.png/300px-EDR_493.png?ee071e", keywords: [] },
+            { name: "Gorishi Wasp", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TLC_630.png/300px-TLC_630.png?d20200", keywords: ['Rush'] },
+            { name: "Silithid Queen", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TLC_903.png/300px-TLC_903.png?d1aac5", keywords: ['Rush'] },
+            { name: "Endangered Dodo", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TIME_703.png/300px-TIME_703.png?3655b4", keywords: ['Taunt'] },
+            { name: "Triennium Rex", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/END_015.png/300px-END_015.png?7a0dba", keywords: ['Deathrattle'] },
+            { name: "Verdant Dreamsaber", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/EDR_014.png/300px-EDR_014.png?a56d83", keywords: [] },
+            { name: "Stormrook", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TIME_217.png/300px-TIME_217.png?cde919", keywords: [] },
+            { name: "Crater Experiment", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/DINO_435.png/300px-DINO_435.png?8a622a", keywords: [] },
+            { name: "Devious Coyote", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/TIME_047.png/300px-TIME_047.png?fde3cc", keywords: ['Stealth'] },
+            { name: "Lake Thresher", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/SCH_605.png/300px-SCH_605.png?4e0263", keywords: [] },
+            { name: "Stranglethorn Tiger", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/EX1_028.png/300px-EX1_028.png?388531", keywords: ['Stealth'] },
+            { name: "Twisted Monstrosity", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/CATA_206.png/300px-CATA_206.png?6a8664", keywords: ['Taunt', 'Elusive'] },
+            { name: "Witchwood Grizzly", cost: 5, image: "https://hearthstone.wiki.gg/images/thumb/GIL_623.png/300px-GIL_623.png?24f5f1", keywords: ['Taunt'] },
+
+            // Cost 6
+            { name: "Bonechill Stegodon", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TLC_401.png/300px-TLC_401.png?b1adf3", keywords: ['Deathrattle'] },
+            { name: "Hideous Husk", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/EDR_810.png/300px-EDR_810.png?bc6d5b", keywords: [] },
+            { name: "Diabolus Rex", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/DINO_138.png/300px-DINO_138.png?50d544", keywords: [] },
+            { name: "Evergreen Stag", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/EDR_272.png/300px-EDR_272.png?7211e6", keywords: ['Taunt', 'Lifesteal', 'Elusive'] },
+            { name: "Ulfar", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/CORE_CATA_006.png/300px-CORE_CATA_006.png?674afe", keywords: [] },
+            { name: "Ankylodon", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/DINO_422.png/300px-DINO_422.png?cd4bf8", keywords: ['Taunt', 'Deathrattle'] },
+            { name: "Epoch Stalker", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TIME_605.png/300px-TIME_605.png?7b58c2", keywords: ['Rush', 'Elusive'] },
+            { name: "Pterrorwing Ravager", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TLC_366.png/300px-TLC_366.png?53d213", keywords: ['Rush'] },
+            { name: "Tyrannogill", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TLC_240.png/300px-TLC_240.png?c26e12", keywords: ['Rush', 'Deathrattle'] },
+            { name: "Haywire Hornswog", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/END_030.png/300px-END_030.png?4c0a7e", keywords: ['Taunt', 'Elusive'] },
+            { name: "Krag'wa, the Frog", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TRL_345.png/300px-TRL_345.png?911c81", keywords: [] },
+            { name: "Scalehide Kodo", cost: 6, image: "https://hearthstone.wiki.gg/images/thumb/TLC_454.png/300px-TLC_454.png?fad234", keywords: [] },
+
+            // Cost 7
+            { name: "Mythical Terror", cost: 7, image: "https://hearthstone.wiki.gg/images/thumb/TTN_866.png/300px-TTN_866.png?6de7d1", keywords: ['Lifesteal'] },
+            { name: "Magmaw", cost: 7, image: "https://hearthstone.wiki.gg/images/thumb/CATA_550.png/300px-CATA_550.png?2d8dc9", keywords: [] },
+            { name: "Mountain Bear", cost: 7, image: "https://hearthstone.wiki.gg/images/thumb/AV_337.png/300px-AV_337.png?2dae8e", keywords: ['Taunt', 'Deathrattle'] },
+            { name: "Techysaurus", cost: 7, image: "https://hearthstone.wiki.gg/images/thumb/DINO_409.png/300px-DINO_409.png?677d6e", keywords: ['Taunt'] },
+            { name: "Ravenous Devilsaur", cost: 7, image: "https://hearthstone.wiki.gg/images/thumb/TLC_829.png/300px-TLC_829.png?5c33fa", keywords: [] },
+
+            // Cost 8
+            { name: "Volcoross", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/FIR_951.png/300px-FIR_951.png?837d5f", keywords: ['Rush', 'Taunt'] },
+            { name: "Perennial Serpent", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/TIME_022.png/300px-TIME_022.png?57c4d2", keywords: ['Rush'] },
+            { name: "Magma Hound", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/FIR_953.png/300px-FIR_953.png?a14e70", keywords: ['Rush'] },
+            { name: "Ursol", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/EDR_259.png/300px-EDR_259.png?6c4304", keywords: [] },
+            { name: "Atlasaurus", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/DINO_431.png/300px-DINO_431.png?425f0c", keywords: ['Taunt', 'Deathrattle'] },
+            { name: "Asphyxiodon", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/DINO_132.png/300px-DINO_132.png?31b6cc", keywords: ['Taunt'] },
+            { name: "The Great Dracorex", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/DINO_401.png/300px-DINO_401.png?3fbd93", keywords: ['Rush'] },
+            { name: "Malorne the Waywatcher", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/EDR_888.png/300px-EDR_888.png?db4137", keywords: [] },
+            { name: "Meadowstrider", cost: 8, image: "https://hearthstone.wiki.gg/images/thumb/EDR_978.png/300px-EDR_978.png?fd255b", keywords: ['Taunt', 'Deathrattle'] },
+
+            // Cost 9
+            { name: "Ursoc", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/EDR_819.png/300px-EDR_819.png?964c4c", keywords: ['Deathrattle'] },
+            { name: "Dread Leviathan", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/CATA_699.png/300px-CATA_699.png?313602", keywords: ['Taunt'] },
+            { name: "Seismopod", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/DINO_421.png/300px-DINO_421.png?726686", keywords: ['Taunt', 'Deathrattle', 'Elusive'] },
+            { name: "Goldrinn", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/EDR_480.png/300px-EDR_480.png?f3fcc9", keywords: ['Rush'] },
+            { name: "Ashamane", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/EDR_527.png/300px-EDR_527.png?11a6fc", keywords: [] },
+            { name: "Ohn'ahra", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/EDR_031.png/300px-EDR_031.png?98c06c", keywords: [] },
+            { name: "Krog, Crater King", cost: 9, image: "https://hearthstone.wiki.gg/images/thumb/TLC_480.png/300px-TLC_480.png?1d8db3", keywords: [] },
+
+            // Cost 10
+            { name: "Omen", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_421.png/300px-EDR_421.png?d177f2", keywords: ['Rush', 'Deathrattle', 'Windfury'] },
+            { name: "Agamaggan", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_489.png/300px-EDR_489.png?723121", keywords: [] },
+            { name: "Tortolla", cost: 10, image: "https://hearthstone.wiki.gg/images/thumb/EDR_471.png/300px-EDR_471.png?c65466", keywords: ['Taunt', 'Elusive'] },
+
+            // Cost 11
+            { name: "Ultragigasaur", cost: 11, image: "https://hearthstone.wiki.gg/images/thumb/TLC_248.png/300px-TLC_248.png?c56d4c", keywords: [] }
+        ];
+
+        // ตัวเลือกสำหรับฟิลเตอร์
+        const costsList = ['All', 4, 5, 6, 7, 8, 9, 10, 11];
+        const keywordsList = ['All', 'Rush', 'Taunt', 'End of turn', 'Deathrattle', 'Stealth', 'Lifesteal', 'Elusive', 'Windfury'];
+        const ratingsList = ['All', 5, 4, 3, 2, 1];
+
+        // สถานะของแอพ (State)
+        let state = {
+            selectedCost: 'All',
+            selectedKeyword: 'All',
+            selectedRating: 'All',
+            searchQuery: '',
+            // โหลดข้อมูลดาวจาก localStorage
+            ratings: JSON.parse(localStorage.getItem('hs_beast_ratings') || '{}')
+        };
+
+        // ฟังก์ชันอัปเดตและเรนเดอร์ UI ใหม่
+        function render() {
+            // 1. กรองข้อมูล
+            let filteredCards = cardsData.filter(card => {
+                const matchCost = state.selectedCost === 'All' || card.cost === state.selectedCost;
+                const matchKeyword = state.selectedKeyword === 'All' || (card.keywords && card.keywords.includes(state.selectedKeyword));
+                const matchSearch = card.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+                
+                const cardRating = state.ratings[card.name] || 0;
+                const matchRating = state.selectedRating === 'All' || cardRating === state.selectedRating;
+                
+                return matchCost && matchKeyword && matchSearch && matchRating;
+            });
+
+            // 2. จัดเรียงข้อมูล (Cost น้อยไปมาก -> ดาว มากไปน้อย)
+            filteredCards.sort((a, b) => {
+                if (a.cost !== b.cost) return a.cost - b.cost;
+                const ratingA = state.ratings[a.name] || 0;
+                const ratingB = state.ratings[b.name] || 0;
+                return ratingB - ratingA;
+            });
+
+            // 3. วาดปุ่มฟิลเตอร์
+            renderFilters();
+
+            // 4. วาดตัวเลขผลลัพธ์
+            document.getElementById('resultsCount').innerText = filteredCards.length;
+
+            // 5. วาดการ์ดทั้งหมด
+            renderCards(filteredCards);
+        }
+
+        // ฟังก์ชันวาดปุ่มฟิลเตอร์
+        function renderFilters() {
+            // Cost Filters
+            document.getElementById('costFilters').innerHTML = '<span class="text-slate-300 font-medium w-24">Mana Cost:</span>' + 
+                costsList.map(cost => {
+                    const isActive = state.selectedCost === cost;
+                    const baseClass = "px-4 py-2 rounded-xl font-bold transition-all duration-200 shadow-md flex items-center justify-center min-w-[3rem]";
+                    const activeClass = "bg-blue-600 text-white border-2 border-blue-400 scale-105";
+                    const inactiveClass = "bg-slate-700 text-slate-300 border-2 border-transparent hover:bg-slate-600 hover:text-white hover:scale-105";
+                    
+                    const innerHtml = cost === 'All' ? 'All' : `<span class="text-xl flex items-center gap-1"><div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white shadow-inner border border-blue-300">${cost}</div></span>`;
+
+                    return `<button onclick="setFilter('cost', ${cost === 'All' ? "'All'" : cost})" class="${baseClass} ${isActive ? activeClass : inactiveClass}">${innerHtml}</button>`;
+                }).join('');
+
+            // Keyword Filters
+            document.getElementById('keywordFilters').innerHTML = '<span class="text-slate-300 font-medium w-24">Keyword:</span>' + 
+                keywordsList.map(keyword => {
+                    const isActive = state.selectedKeyword === keyword;
+                    const baseClass = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm";
+                    const activeClass = "bg-amber-600 text-white border border-amber-400 scale-105";
+                    const inactiveClass = "bg-slate-700 text-slate-300 border border-transparent hover:bg-slate-600 hover:text-white hover:scale-105";
+                    
+                    return `<button onclick="setFilter('keyword', '${keyword}')" class="${baseClass} ${isActive ? activeClass : inactiveClass}">${keyword}</button>`;
+                }).join('');
+
+            // Rating Filters
+            const ratingNote = `<span class="text-sm text-slate-400 ml-2 italic border-l border-slate-600 pl-3 hidden sm:inline">* Users must give a star rating for the search and sorting system to work.</span>`;
+            document.getElementById('ratingFilters').innerHTML = '<span class="text-slate-300 font-medium w-24">Rating:</span>' + 
+                ratingsList.map(rating => {
+                    const isActive = state.selectedRating === rating;
+                    const baseClass = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm flex items-center gap-1";
+                    const activeClass = "bg-yellow-600 text-white border border-yellow-400 scale-105";
+                    const inactiveClass = "bg-slate-700 text-slate-300 border border-transparent hover:bg-slate-600 hover:text-white hover:scale-105";
+                    
+                    const innerHtml = rating === 'All' ? 'All' : `${rating} <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+
+                    return `<button onclick="setFilter('rating', ${rating === 'All' ? "'All'" : rating})" class="${baseClass} ${isActive ? activeClass : inactiveClass}">${innerHtml}</button>`;
+                }).join('') + ratingNote;
+        }
+
+        // ฟังก์ชันวาดรูปการ์ด
+        function renderCards(filteredCards) {
+            const container = document.getElementById('cardsContainer');
+            
+            if (filteredCards.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-20">
+                        <p class="text-2xl text-slate-500">No cards found for this criteria.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filteredCards.map((card) => {
+                const currentRating = state.ratings[card.name] || 0;
+                
+                // แปลงคำที่มี Single quote ให้ไม่พังเมื่อใส่ใน onclick
+                const safeCardName = card.name.replace(/'/g, "\\'");
+                
+                // สร้างดาว
+                const starsHtml = [1, 2, 3, 4, 5].map(star => {
+                    const isActive = currentRating >= star;
+                    const colorClass = isActive ? 'text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.6)]' : 'text-slate-600 hover:text-yellow-200';
+                    return `
+                        <button onclick="handleRate('${safeCardName}', ${star})" class="focus:outline-none transition-transform hover:scale-125">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${colorClass}" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </button>
+                    `;
+                }).join('');
+
+                // สร้าง Keywords tags
+                const keywordsHtml = card.keywords && card.keywords.length > 0 
+                    ? `<div class="flex flex-wrap justify-center gap-1 mt-2">
+                        ${card.keywords.map(kw => `<span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-slate-700/80 text-amber-200 rounded-full border border-amber-900/50">${kw}</span>`).join('')}
+                       </div>` 
+                    : '';
+
+                return `
+                    <div class="group flex flex-col items-center bg-slate-800/50 rounded-2xl p-4 transition-all duration-300 hover:bg-slate-800 hover:shadow-2xl hover:shadow-blue-900/30 hover:-translate-y-2 border border-slate-700/50">
+                        <div class="relative w-full aspect-[2/3] flex justify-center items-center overflow-visible drop-shadow-2xl">
+                            <img 
+                                src="${card.image}" 
+                                alt="${card.name}" 
+                                class="w-[120%] max-w-none h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400/1e293b/64748b?text=Image+Not+Found';"
+                            />
+                        </div>
+                        <div class="mt-4 text-center w-full">
+                            <h3 class="text-lg font-bold text-amber-100 group-hover:text-amber-400 transition-colors line-clamp-2">
+                                ${card.name}
+                            </h3>
+                            ${keywordsHtml}
+                            <div class="flex justify-center gap-1 mt-3">
+                                ${starsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Event Handlers & Actions ---
+
+        // จัดการเมื่อเปลี่ยนตัวกรอง (Cost, Keyword, Rating)
+        function setFilter(type, value) {
+            if (type === 'cost') state.selectedCost = value;
+            if (type === 'keyword') state.selectedKeyword = value;
+            if (type === 'rating') state.selectedRating = value;
+            render();
+        }
+
+        // จัดการช่องค้นหา
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            state.searchQuery = e.target.value;
+            render();
+        });
+
+        // จัดการเวลากดให้ดาว
+        function handleRate(cardName, star) {
+            if (state.ratings[cardName] === star) {
+                // ถ้ากดดาวดวงเดิมให้รีเซ็ต
+                state.ratings[cardName] = 0;
+            } else {
+                state.ratings[cardName] = star;
+            }
+            // เซฟลง localStorage ทันที
+            localStorage.setItem('hs_beast_ratings', JSON.stringify(state.ratings));
+            render();
+        }
+
+        // สั่งทำงานครั้งแรกเมื่อเปิดหน้าเว็บ
+        render();
+
+    </script>
+</body>
+</html>
