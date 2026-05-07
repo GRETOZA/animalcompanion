@@ -423,8 +423,8 @@
 
             // 2. Render Slots
             slotsContainer.innerHTML = state.slots.map((card, index) => {
-                // If it is Cost 3, slots are uneditable (Starter cards)
-                if (state.currentCost === 3 && card) {
+                // If it is Cost 3 or 10, slots are uneditable
+                if ((state.currentCost === 3 || state.currentCost === 10) && card) {
                     return `
                         <div class="relative flex flex-col items-center bg-slate-800 rounded-2xl p-4 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.15)] aspect-[2/3] justify-center">
                             <img src="${card.image}" alt="${card.name}" class="w-[110%] max-w-none h-auto object-contain drop-shadow-2xl" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400/1e293b/64748b?text=Image+Not+Found';" />
@@ -432,7 +432,7 @@
                         </div>
                     `;
                 } 
-                // Normal selectable slots (Cost 4+)
+                // Normal selectable slots (Cost 4-9)
                 else if (card === null) {
                     return `
                         <div onclick="openModal(${index})" class="cursor-pointer group flex flex-col items-center justify-center bg-slate-800/30 rounded-2xl p-6 border-2 border-dashed border-slate-600 hover:border-blue-500 hover:bg-slate-800/50 transition-all duration-300 aspect-[2/3] shadow-inner">
@@ -528,7 +528,15 @@
         function upgradeCost() {
             if (state.currentCost < 10) {
                 state.currentCost++;
-                state.slots = [null, null, null];
+                
+                if (state.currentCost === 10) {
+                    // Auto-fill slots for cost 10 since there are exactly 3 cards
+                    const cost10Cards = cardsData.filter(c => c.cost === 10);
+                    state.slots = [...cost10Cards];
+                } else {
+                    state.slots = [null, null, null];
+                }
+                
                 state.nextUpgradeKeyword = 'All'; // Reset filter when upgrading
                 renderHome();
             }
